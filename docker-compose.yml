@@ -1,0 +1,43 @@
+services:
+  django_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cash_flow_management
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    restart: unless-stopped
+    volumes:
+      - ./apps:/app/apps
+      - ./static:/app/static
+      - ./templates:/app/templates
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      DBpostgresql:
+        condition: service_healthy
+
+  DBpostgresql:
+    image: postgres:16
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: db_postgresql
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db_dump.sql:/docker-entrypoint-initdb.d/db_dump.sql
+      - postgres_data:/var/lib/postgresql/cash_flow_management
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_data:

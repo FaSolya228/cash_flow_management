@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% block content%}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="w-auto mx-auto alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="text-center">
+        <h5 class="fw-semibold mb-4 mt-3">Запись о движении денежных средств</h5>
+        <br>
+        <form  class="w-50 mx-auto" method="post">
+            {% csrf_token %}
+            <div class="mb-3 text-start">
+                <label class="form-label">Тип</label>
+                {{ form.type }}
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label">Сумма ДС</label>
+                {{ form.amount }}
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label">Категория</label>
+                {{ form.category }}
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label">Подкатегория</label>
+                {{ form.subcategory }}
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label">Статус</label>
+                {{ form.status }}
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label">Комментарий</label>
+                {{ form.comment }}
+            </div>
+            <div class="mb-3 text-start">
+                <label class="form-label">Дата создания записи</label>
+                {{ form.creation_date }}
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+{%endblock%}
